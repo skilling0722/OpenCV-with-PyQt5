@@ -45,7 +45,8 @@ class Ui_MainWindow(QMainWindow):
         file_menu.addAction(Open_action)
         file_menu.addAction(Exit_action)
 
-        filter_menu = menu_bar.addMenu("&Filter")
+        self.filter_menu = menu_bar.addMenu("&Filter")
+        self.filter_menu.setEnabled(False)
 
         Sobel_action = QAction('Sobel filter', self)
         Sobel_action.setShortcut('Alt+1')
@@ -78,22 +79,27 @@ class Ui_MainWindow(QMainWindow):
             lambda : self.LoG_filter(img)
         )
 
-        filter_menu.addAction(Sobel_action)
-        filter_menu.addAction(Prewitt_action)
-        filter_menu.addAction(Gaussian_action)
-        filter_menu.addAction(Canny_action)
-        filter_menu.addAction(LoG_action)
+        self.filter_menu.addAction(Sobel_action)
+        self.filter_menu.addAction(Prewitt_action)
+        self.filter_menu.addAction(Gaussian_action)
+        self.filter_menu.addAction(Canny_action)
+        self.filter_menu.addAction(LoG_action)
 
 
     def read_file(self):
         global img
         file_name = QFileDialog.getOpenFileName(self)
 
-        img0 = cv2.imread(file_name[0])
-        img = cv2.cvtColor(img0, cv2.COLOR_BGR2RGB)
+        if file_name[0] is not '':
+            img0 = cv2.imread(file_name[0])
 
-        self.reshow_image(img)
+            img = cv2.cvtColor(img0, cv2.COLOR_BGR2RGB)
 
+            self.reshow_image(img)
+            print('aa')
+            self.filter_menu.setEnabled(True)
+        else:
+            print('please put img')
 
     def save_image(self):
         print("save")
@@ -158,6 +164,7 @@ class Ui_MainWindow(QMainWindow):
             self.image_label.setPixmap(QPixmap.fromImage(Q_img))
         else:
             print("Image load failed")
+
 
     def exit(self):
         cv2.waitKey(0)
